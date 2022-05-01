@@ -10,10 +10,13 @@ defmodule KorgiWeb.SensorLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
+
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:sensor, Sensors.get_sensor!(id))}
+     |> assign(:sensor, sensor)
+     |> assign(:readings, sensor.readings)}
   end
 
   defp page_title(:show), do: "Show Sensor"

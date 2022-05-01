@@ -6,6 +6,8 @@ defmodule Korgi.Sensors.Sensor do
     field :name, :string
     field :topic, :string
 
+    has_many :readings, Korgi.Readings.Reading
+
     timestamps()
   end
 

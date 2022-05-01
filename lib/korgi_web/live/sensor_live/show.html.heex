@@ -1,16 +1,38 @@
-<h1>Show Sensor</h1>
-<ul>
+<h2><strong>Sensor: </strong> <%= @sensor.name %></h2>
+<h3><strong>Topic: </strong>  <%= @sensor.topic %></h3>
 
-  <li>
-    <strong>Name:</strong>
-    <%= @sensor.name %>
-  </li>
+<hr>
+<canvas id="myChart"></canvas>
+<hr>
 
-  <li>
-    <strong>Topic:</strong>
-    <%= @sensor.topic %>
-  </li>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-</ul>
+<script>
+  let chart_data = [];
+  <%= for reading <- @readings do %>
+    chart_data.push({x: "<%= reading.updated_at %>", y: "<%= reading.value %>"});
+  <% end %>
+
+  const data = {
+    datasets: [{
+      type: 'bar',
+      label: 'My First dataset',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: chart_data,
+    }]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {}
+  };
+
+    const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+</script>
 
 <span><%= live_redirect "Back", to: Routes.sensor_index_path(@socket, :index) %></span>
