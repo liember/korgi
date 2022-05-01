@@ -1,0 +1,16 @@
+<h1>Show Sensor</h1>
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @sensor.name %>
+  </li>
+
+  <li>
+    <strong>Topic:</strong>
+    <%= @sensor.topic %>
+  </li>
+
+</ul>
+
+<span><%= live_redirect "Back", to: Routes.sensor_index_path(@socket, :index) %></span>

@@ -1,0 +1,24 @@
+<h1>Listing Sensors</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Topic</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="sensors">
+    <%= for sensor <- @sensors do %>
+      <tr id={"sensor-#{sensor.id}"}>
+        <td><%= sensor.name %></td>
+        <td><%= sensor.topic %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.sensor_show_path(@socket, :show, sensor) %></span>
+       </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
