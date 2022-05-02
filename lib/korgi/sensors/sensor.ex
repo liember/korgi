@@ -6,7 +6,7 @@ defmodule Korgi.Sensors.Sensor do
     field :name, :string
     field :topic, :string
     field :enabled, :boolean
-
+    belongs_to :broker, Korgi.MQTT.Broker
     has_many :readings, Korgi.Readings.Reading
 
     timestamps()
