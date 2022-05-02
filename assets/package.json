@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "alpinejs": "^3.10.2"
+    "alpinejs": "^3.10.2",
+    "chart.js": "^3.7.1",
+    "chartjs-adapter-luxon": "^1.1.0",
+    "chartjs-plugin-streaming": "^2.0.0",
+    "luxon": "^2.3.2"
   }
 }

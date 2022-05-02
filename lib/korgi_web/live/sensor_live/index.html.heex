@@ -16,8 +16,8 @@
         <td><%= sensor.name %></td>
         <td><%= sensor.topic %></td>
         <td>
-          <button phx-click="toggle_sensor_state" phx-value-sensorid={"#{sensor.id}"} >
-            <%= sensor.enabled %>
+          <button style = {if sensor.enabled do "background-color: green" else "background-color: red" end} phx-click="toggle_sensor_state" phx-value-sensorid={"#{sensor.id}"} >
+            <%= if sensor.enabled do "active" else "inactive" end %>
           </button>
         </td>
         <td>
