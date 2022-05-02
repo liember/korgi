@@ -5,6 +5,7 @@
     <tr>
       <th>Name</th>
       <th>Topic</th>
+      <th>Enabled</th>
 
       <th></th>
     </tr>
@@ -14,7 +15,11 @@
       <tr id={"sensor-#{sensor.id}"}>
         <td><%= sensor.name %></td>
         <td><%= sensor.topic %></td>
-
+        <td>
+          <button phx-click="toggle_sensor_state" phx-value-sensorid={"#{sensor.id}"} >
+            <%= sensor.enabled %>
+          </button>
+        </td>
         <td>
           <span><%= live_redirect "Show", to: Routes.sensor_show_path(@socket, :show, sensor) %></span>
        </td>

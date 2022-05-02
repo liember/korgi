@@ -40,6 +40,21 @@ defmodule KorgiWeb.SensorLive.Index do
     {:noreply, assign(socket, :sensors, list_sensors())}
   end
 
+  @impl true
+  def handle_event("toggle_sensor_state", %{"sensorid" => id}, socket) do
+    try do
+      {sensor_id, ""} = Integer.parse(id)
+      %Sensor{enabled: state} = sensor = Sensors.get_sensor!(sensor_id)
+      IO.inspect({sensor, not state})
+      IO.inspect(Sensors.update_sensor(sensor, %{enabled: not state}))
+    rescue
+      e -> IO.inspect(e)
+    end
+
+    {:noreply, assign(socket, :sensors, list_sensors())}
+  end
+
+  ## TODO sort by name or other prams (no by update date)
   defp list_sensors do
     Sensors.list_sensors()
   end

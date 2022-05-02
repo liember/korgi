@@ -5,6 +5,7 @@ defmodule Korgi.Sensors.Sensor do
   schema "sensors" do
     field :name, :string
     field :topic, :string
+    field :enabled, :boolean
 
     has_many :readings, Korgi.Readings.Reading
 
@@ -14,7 +15,7 @@ defmodule Korgi.Sensors.Sensor do
   @doc false
   def changeset(sensor, attrs) do
     sensor
-    |> cast(attrs, [:name, :topic])
-    |> validate_required([:name, :topic])
+    |> cast(attrs, [:name, :topic, :enabled])
+    |> validate_required([:name, :topic, :enabled])
   end
 end
