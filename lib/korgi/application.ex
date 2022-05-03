@@ -23,7 +23,9 @@ defmodule Korgi.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Korgi.Supervisor]
-    Supervisor.start_link(children, opts)
+    res = Supervisor.start_link(children, opts)
+    Korgi.MQTT.Connection.init(:ok)
+    res
   end
 
   # Tell Phoenix to update the endpoint configuration
