@@ -70,7 +70,7 @@ export default class {
   }
 
   _createDataset(label) {
-    const newDataset = {label, data: [], borderColor: colors.pop()}
+    const newDataset = {label, data: [], borderColor: this.colors.pop()}
     this.chart.data.datasets.push(newDataset)
     return newDataset
   }
