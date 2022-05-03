@@ -38,6 +38,15 @@ defmodule Korgi.Sensors do
   """
   def get_sensor!(id), do: Repo.get!(Sensor, id)
 
+  def get_sensor_id_by_topic!(topic) do
+    query =
+      from u in "sensors",
+        where: u.topic == ^topic,
+        select: u.id
+
+    Repo.one!(query)
+  end
+
   @doc """
   Creates a sensor.
 

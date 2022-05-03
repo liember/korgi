@@ -24,6 +24,7 @@ defmodule Korgi.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Korgi.Supervisor]
     res = Supervisor.start_link(children, opts)
+    ## TODO add custom mqtt connections supervisor
     Korgi.MQTT.Connection.init(:ok)
     res
   end

@@ -12,7 +12,7 @@ defmodule Korgi.Sensors.Reading do
   @doc false
   def changeset(reading, attrs) do
     reading
-    |> cast(attrs, [:value])
-    |> validate_required([:value])
+    |> cast(attrs, [:value, :sensor_id])
+    |> validate_required([:value, :sensor_id])
   end
 end
