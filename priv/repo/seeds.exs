@@ -14,11 +14,11 @@ Korgi.Repo.insert_all(
   "mqtt_brokers",
   [
     [
-      host: "sevladig.ddns.net",
+      host: "localhost",
       name: "home_broker",
-      password: "1234gres",
-      port: 61883,
-      username: "serg4321",
+      password: "liember",
+      port: 1883,
+      username: "liember",
       inserted_at: DateTime.utc_now(),
       updated_at: DateTime.utc_now()
     ]
