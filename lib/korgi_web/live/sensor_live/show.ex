@@ -5,13 +5,10 @@ defmodule KorgiWeb.SensorLive.Show do
 
   alias Korgi.Sensors
   alias Korgi.MQTT
+  alias Korgi.Readings.Reading
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      :timer.send_interval(1000, self(), :update_chart)
-    end
-
     {:ok, socket}
   end
 
@@ -20,8 +17,19 @@ defmodule KorgiWeb.SensorLive.Show do
     sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
     broker = MQTT.get_broker_mqtt!(sensor.broker_id)
 
+    if connected?(socket) do
+      :timer.send_interval(1000, self(), {:update_chart, sensor})
+    end
+
+    story_points =
+      sensor.readings
+      |> Enum.map(fn %Reading{value: val, inserted_at: time} ->
+        %{label: sensor.name, date: time, value: val}
+      end)
+
     {:noreply,
      socket
+     |> push_event("story-points", %{data: story_points})
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:sensor, sensor)
      |> assign(:readings, sensor.readings)
@@ -53,15 +61,13 @@ defmodule KorgiWeb.SensorLive.Show do
   end
 
   @impl Phoenix.LiveView
-  def handle_info(:update_chart, socket) do
+  def handle_info({:update_chart, sensor}, socket) do
     {:noreply,
-     Enum.reduce(1..5, socket, fn i, acc ->
-       push_event(
-         acc,
-         "new-point",
-         %{label: "User #{i}", value: Enum.random(50..150) + i * 10}
-       )
-     end)}
+     push_event(socket, "new-point", %{
+       label: sensor.name,
+       date: DateTime.utc_now() |> DateTime.add(Enum.random(1000..15_000_000_000)),
+       value: Enum.random(50..150)
+     })}
   end
 
   defp page_title(:show), do: "Show Sensor"

@@ -33,7 +33,7 @@ export default class {
           // https://nagix.github.io/chartjs-plugin-streaming/2.0.0/guide/options.html
           streaming: {
             // 表示するX軸の幅をミリ秒で指定。
-            duration: 60 * 1000,
+            duration: 2 * 3600 * 1000,
             // Chart.jsに点をプロットする猶予を与える。
             delay: 1500
           }
@@ -55,9 +55,9 @@ export default class {
     this.chart = new Chart(ctx, config)
   }
 
-  addPoint(label, value) {
+  addPoint(label, date, value) {
     const dataset = this._findDataset(label) || this._createDataset(label)
-    dataset.data.push({x: Date.now(), y: value})
+    dataset.data.push({x: date, y: value})
     this.chart.update()
   }
 

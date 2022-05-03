@@ -9,8 +9,11 @@ export default {
     this.chart = new RealtimeLineChart(this.el)
 
     // LiveViewから'new-point'イベントを受信時、座標を追加する。
-    this.handleEvent('new-point', ({ label, value }) => {
-      this.chart.addPoint(label, value)
+    this.handleEvent('new-point', ({ label, date, value }) => {
+      this.chart.addPoint(label, date, value)
+    })
+    this.handleEvent('story-points', ({data}) => {
+      data.map( ({ label, value, date}) => {this.chart.addPoint(label, date, value)} )
     })
   },
   destroyed() {
