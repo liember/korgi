@@ -14,12 +14,34 @@ defmodule KorgiWeb.SensorLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    if connected?(socket) do
+      :timer.send_interval(10000, {:update, id})
+    end
+
+    assign_page_data(socket, id)
+  end
+
+  @impl true
+  def handle_event("toggle_sensor_state", %{"sensorid" => id}, socket) do
+    try do
+      with {sensor_id, ""} <- Integer.parse(id),
+           sensor <- Sensors.get_sensor!(sensor_id),
+           {:ok, updated} <- Sensors.update_sensor(sensor, %{enabled: not sensor.enabled}) do
+        {:noreply, socket |> assign(:sensor, updated)}
+      end
+    rescue
+      e -> Logger.error("Handle event error: #{inspect(e)}")
+    end
+  end
+
+  @impl true
+  def handle_info({:update, id}, socket) do
+    assign_page_data(socket, id)
+  end
+
+  defp assign_page_data(socket, id) do
     sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
     broker = MQTT.get_broker_mqtt!(sensor.broker_id)
-
-    if connected?(socket) do
-      :timer.send_interval(1000, self(), {:update_chart, sensor})
-    end
 
     story_points =
       sensor.readings
@@ -34,40 +56,6 @@ defmodule KorgiWeb.SensorLive.Show do
      |> assign(:sensor, sensor)
      |> assign(:readings, sensor.readings)
      |> assign(:broker, broker)}
-  end
-
-  @impl true
-  def handle_event("toggle_sensor_state", %{"sensorid" => id}, socket) do
-    try do
-      {sensor_id, ""} = Integer.parse(id)
-      sensor = Sensors.get_sensor!(sensor_id)
-      Sensors.update_sensor(sensor, %{enabled: not sensor.enabled})
-      sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
-      broker = MQTT.get_broker_mqtt!(sensor.broker_id)
-
-      {:noreply,
-       socket
-       |> assign(:page_title, page_title(socket.assigns.live_action))
-       |> assign(:sensor, sensor)
-       |> assign(:readings, sensor.readings)
-       |> assign(:broker, broker)}
-    rescue
-      e ->
-        Logger.error("Handle event error: #{inspect(e)}", [
-          :application,
-          :mfa
-        ])
-    end
-  end
-
-  @impl Phoenix.LiveView
-  def handle_info({:update_chart, sensor}, socket) do
-    {:noreply,
-     push_event(socket, "new-point", %{
-       label: sensor.name,
-       date: DateTime.utc_now() |> DateTime.add(Enum.random(1000..15_000_000_000)),
-       value: Enum.random(50..150)
-     })}
   end
 
   defp page_title(:show), do: "Show Sensor"
