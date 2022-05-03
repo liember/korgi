@@ -4,7 +4,7 @@ defmodule Korgi.ReadingsTest do
   alias Korgi.Readings
 
   describe "readings" do
-    alias Korgi.Readings.Reading
+    alias Korgi.Sensors.Reading
 
     import Korgi.ReadingsFixtures
 

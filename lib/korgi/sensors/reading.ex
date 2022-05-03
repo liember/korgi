@@ -1,4 +1,4 @@
-defmodule Korgi.Readings.Reading do
+defmodule Korgi.Sensors.Reading do
   use Ecto.Schema
   import Ecto.Changeset
 

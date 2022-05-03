@@ -5,7 +5,7 @@ defmodule KorgiWeb.SensorLive.Show do
 
   alias Korgi.Sensors
   alias Korgi.MQTT
-  alias Korgi.Readings.Reading
+  alias Korgi.Sensors.Reading
 
   @impl true
   def mount(_params, _session, socket) do

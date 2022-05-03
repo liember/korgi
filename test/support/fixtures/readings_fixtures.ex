@@ -14,7 +14,7 @@ defmodule Korgi.ReadingsFixtures do
         sesnor_id: 42,
         value: "some value"
       })
-      |> Korgi.Readings.create_reading()
+      |> Korgi.Sensors.create_reading()
 
     reading
   end
