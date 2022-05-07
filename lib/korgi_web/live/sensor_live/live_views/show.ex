@@ -9,35 +9,27 @@ defmodule KorgiWeb.SensorLive.Show do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
+  def mount(_params, _session, socket), do: {:ok, socket}
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    try do
-      sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
-      broker = MQTT.get_broker_mqtt!(sensor.broker_id)
-      PubSub.subscribe(Korgi.PubSub, Sensors.sensor_pubsub_topic(sensor))
+    sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
+    broker = MQTT.get_broker_mqtt!(sensor.broker_id)
+    PubSub.subscribe(Korgi.PubSub, Sensors.sensor_pubsub_topic(sensor))
 
-      story_points =
-        sensor.readings
-        |> Enum.map(fn %Reading{value: val, inserted_at: time} ->
-          %{label: sensor.name, date: time, value: val}
-        end)
+    story_points =
+      sensor.readings
+      |> Enum.map(fn %Reading{value: val, inserted_at: time} ->
+        %{label: sensor.name, date: time, value: val}
+      end)
 
-      {:noreply,
-       socket
-       |> push_event("story-points", %{data: story_points})
-       |> assign(:page_title, page_title(socket.assigns.live_action))
-       |> assign(:sensor, sensor)
-       |> assign(:readings, sensor.readings)
-       |> assign(:broker, broker)}
-    rescue
-      e ->
-        Logger.error("Error while init show_live: #{inspect(e)}")
-        {:noreply, socket}
-    end
+    {:noreply,
+     socket
+     |> push_event("story-points", %{data: story_points})
+     |> assign(:page_title, page_title(socket.assigns.live_action))
+     |> assign(:sensor, sensor)
+     |> assign(:readings, sensor.readings)
+     |> assign(:broker, broker)}
   end
 
   @impl true
