@@ -7,6 +7,12 @@
   <%= if @sensor.enabled do "active" else "inactive" end %>
 </button>
 
+<button
+  phx-click="edit_sensor"
+  phx-value-sensorid={"#{@sensor.id}"}>
+  edit
+</button>
+
 <hr>
 
 <canvas id="chart-canvas" phx-update="ignore" phx-hook="LineChart"></canvas>

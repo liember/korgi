@@ -28,9 +28,10 @@ defmodule Korgi.MQTT.Handler do
         |> Sensors.get_sensor_id_by_topic!()
         |> Sensors.get_sensor!()
 
-      with {:ok, reading} <- Sensors.create_reading(%{sensor_id: sensor.id, value: payload}) do
-        Logger.info("Send")
+      reading_params = %{sensor_id: sensor.id, value: payload}
 
+      with true <- sensor.enabled,
+           {:ok, reading} <- Sensors.create_reading(reading_params) do
         PubSub.broadcast(
           Korgi.PubSub,
           Sensors.sensor_pubsub_topic(sensor),
@@ -43,9 +44,7 @@ defmodule Korgi.MQTT.Handler do
       e ->
         Logger.error("Cant find sensor with topic #{inspect(topic)} in db error: #{inspect(e)}")
     after
-      Logger.info(
-        "handle_message state #{inspect(state)} topic: #{inspect(topic)}, payload: #{inspect(payload)}"
-      )
+      Logger.info("handle_message topic: #{inspect(topic)}, payload: #{inspect(payload)}")
     end
 
     {:ok, state}

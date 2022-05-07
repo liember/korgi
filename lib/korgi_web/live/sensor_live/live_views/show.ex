@@ -42,15 +42,24 @@ defmodule KorgiWeb.SensorLive.Show do
 
   @impl true
   def handle_event("toggle_sensor_state", %{"sensorid" => id}, socket) do
-      with {sensor_id, ""} <- Integer.parse(id),
-           sensor <- Sensors.get_sensor!(sensor_id),
-           {:ok, updated} <- Sensors.update_sensor(sensor, %{enabled: not sensor.enabled}) do
-        {
-          :noreply, socket
-          |> assign(:sensor, updated)
-          |> put_flash(:info, "Sensor " <> if sensor.enabled do "disabled" else "enabled" end <> " updated successfully")
-        }
-      end
+    with {sensor_id, ""} <- Integer.parse(id),
+         sensor <- Sensors.get_sensor!(sensor_id),
+         {:ok, updated} <- Sensors.update_sensor(sensor, %{enabled: not sensor.enabled}) do
+      flash_msg =
+        "Sensor " <>
+          if sensor.enabled do
+            "disabled"
+          else
+            "enabled"
+          end <> " updated successfully"
+
+      {
+        :noreply,
+        socket
+        |> assign(:sensor, updated)
+        |> put_flash(:info, flash_msg)
+      }
+    end
   end
 
   @impl true
