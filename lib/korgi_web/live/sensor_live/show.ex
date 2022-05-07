@@ -6,6 +6,7 @@ defmodule KorgiWeb.SensorLive.Show do
   alias Korgi.Sensors
   alias Korgi.MQTT
   alias Korgi.Sensors.Reading
+  alias Phoenix.PubSub
 
   @impl true
   def mount(_params, _session, socket) do
@@ -14,11 +15,29 @@ defmodule KorgiWeb.SensorLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    if connected?(socket) do
-      :timer.send_interval(10000, {:update, id})
-    end
+    try do
+      sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
+      broker = MQTT.get_broker_mqtt!(sensor.broker_id)
+      PubSub.subscribe(Korgi.PubSub, Sensors.sensor_pubsub_topic(sensor))
 
-    assign_page_data(socket, id)
+      story_points =
+        sensor.readings
+        |> Enum.map(fn %Reading{value: val, inserted_at: time} ->
+          %{label: sensor.name, date: time, value: val}
+        end)
+
+      {:noreply,
+       socket
+       |> push_event("story-points", %{data: story_points})
+       |> assign(:page_title, page_title(socket.assigns.live_action))
+       |> assign(:sensor, sensor)
+       |> assign(:readings, sensor.readings)
+       |> assign(:broker, broker)}
+    rescue
+      e ->
+        Logger.error("Error while init show_live: #{inspect(e)}")
+        {:noreply, socket}
+    end
   end
 
   @impl true
@@ -35,27 +54,15 @@ defmodule KorgiWeb.SensorLive.Show do
   end
 
   @impl true
-  def handle_info({:update, id}, socket) do
-    assign_page_data(socket, id)
-  end
-
-  defp assign_page_data(socket, id) do
-    sensor = Sensors.get_sensor!(id) |> Korgi.Repo.preload(:readings)
-    broker = MQTT.get_broker_mqtt!(sensor.broker_id)
-
-    story_points =
-      sensor.readings
-      |> Enum.map(fn %Reading{value: val, inserted_at: time} ->
-        %{label: sensor.name, date: time, value: val}
-      end)
+  def handle_info({:sensor_new_reading, %{reading: reading, label: label}}, socket) do
+    Logger.info("Update sensor data: #{inspect(reading.value)}")
 
     {:noreply,
-     socket
-     |> push_event("story-points", %{data: story_points})
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:sensor, sensor)
-     |> assign(:readings, sensor.readings)
-     |> assign(:broker, broker)}
+     push_event(socket, "new-point", %{
+       label: label,
+       value: reading.value,
+       date: reading.updated_at
+     })}
   end
 
   defp page_title(:show), do: "Show Sensor"

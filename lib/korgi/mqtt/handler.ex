@@ -3,6 +3,7 @@ defmodule Korgi.MQTT.Handler do
   require Logger
 
   alias Korgi.Sensors
+  alias Phoenix.PubSub
 
   @impl true
   def init(args) do
@@ -21,21 +22,30 @@ defmodule Korgi.MQTT.Handler do
 
   @impl true
   def handle_message(topic, payload, state) do
-    Logger.info(
-      "handle_message state #{inspect(state)} topic: #{inspect(topic)}, payload: #{inspect(payload)}"
-    )
-
     try do
       sensor =
-        topic
-        |> Enum.join("/")
+        Enum.join(topic, "/")
         |> Sensors.get_sensor_id_by_topic!()
         |> Sensors.get_sensor!()
 
-      Sensors.create_reading(%{sensor_id: sensor.id, value: payload})
+      with {:ok, reading} <- Sensors.create_reading(%{sensor_id: sensor.id, value: payload}) do
+        Logger.info("Send")
+
+        PubSub.broadcast(
+          Korgi.PubSub,
+          Sensors.sensor_pubsub_topic(sensor),
+          {:sensor_new_reading, %{reading: reading, label: sensor.name}}
+        )
+      else
+        {:error, changeset} -> Logger.error("Worng data format: #{inspect(changeset)}")
+      end
     rescue
       e ->
         Logger.error("Cant find sensor with topic #{inspect(topic)} in db error: #{inspect(e)}")
+    after
+      Logger.info(
+        "handle_message state #{inspect(state)} topic: #{inspect(topic)}, payload: #{inspect(payload)}"
+      )
     end
 
     {:ok, state}

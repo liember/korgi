@@ -34,6 +34,7 @@ defmodule Korgi.MixProject do
   defp deps do
     [
       {:tortoise, "~> 0.9"},
+      {:phoenix_pubsub, "~> 2.0"},
       ##
       {:phoenix, "~> 1.6.6"},
       {:phoenix_ecto, "~> 4.4"},

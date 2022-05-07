@@ -21,7 +21,13 @@ defmodule Korgi.MQTTTest do
     end
 
     test "create_broker/1 with valid data creates a broker" do
-      valid_attrs = %{host: "some host", name: "some name", password: "some password", port: 42, username: "some username"}
+      valid_attrs = %{
+        host: "some host",
+        name: "some name",
+        password: "some password",
+        port: 42,
+        username: "some username"
+      }
 
       assert {:ok, %Broker{} = broker} = MQTT.create_broker(valid_attrs)
       assert broker.host == "some host"
@@ -37,7 +43,14 @@ defmodule Korgi.MQTTTest do
 
     test "update_broker/2 with valid data updates the broker" do
       broker = broker_fixture()
-      update_attrs = %{host: "some updated host", name: "some updated name", password: "some updated password", port: 43, username: "some updated username"}
+
+      update_attrs = %{
+        host: "some updated host",
+        name: "some updated name",
+        password: "some updated password",
+        port: 43,
+        username: "some updated username"
+      }
 
       assert {:ok, %Broker{} = broker} = MQTT.update_broker(broker, update_attrs)
       assert broker.host == "some updated host"

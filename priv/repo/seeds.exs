@@ -61,20 +61,20 @@ Korgi.Repo.insert_all(
     [
       value: "26",
       sensor_id: sensor_id,
-      inserted_at: DateTime.utc_now() |> DateTime.add(60, :second),
-      updated_at: DateTime.utc_now() |> DateTime.add(60, :second)
+      inserted_at: DateTime.utc_now() |> DateTime.add(-60, :second),
+      updated_at: DateTime.utc_now() |> DateTime.add(-60, :second)
     ],
     [
       value: "28",
       sensor_id: sensor_id,
-      inserted_at: DateTime.utc_now() |> DateTime.add(120, :second),
-      updated_at: DateTime.utc_now() |> DateTime.add(120, :second)
+      inserted_at: DateTime.utc_now() |> DateTime.add(-120, :second),
+      updated_at: DateTime.utc_now() |> DateTime.add(-120, :second)
     ],
     [
       value: "20",
       sensor_id: sensor_id,
-      inserted_at: DateTime.utc_now() |> DateTime.add(180, :second),
-      updated_at: DateTime.utc_now() |> DateTime.add(180, :second)
+      inserted_at: DateTime.utc_now() |> DateTime.add(-180, :second),
+      updated_at: DateTime.utc_now() |> DateTime.add(-180, :second)
     ]
   ]
 )

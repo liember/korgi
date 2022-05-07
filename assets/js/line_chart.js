@@ -1,12 +1,9 @@
-// assets/js/line_chart.js
-
-// https://www.chartjs.org/docs/3.6.1/getting-started/integration.html#bundlers-webpack-rollup-etc
 import Chart from 'chart.js/auto'
 import 'chartjs-adapter-luxon'
 import ChartStreaming from 'chartjs-plugin-streaming'
 Chart.register(ChartStreaming)
 
-// A wrapper of Chart.js that configures the realtime line chart.
+
 export default class {
   constructor(ctx) {
     this.colors = [
@@ -23,28 +20,27 @@ export default class {
       data: { datasets: [] },
       options: {
         datasets: {
-          // https://www.chartjs.org/docs/3.6.0/charts/line.html#dataset-properties
           line: {
-            // 線グラフに丸みを帯びさせる。
             tension: 0.6
           }
         },
-        plugins: {
+                plugins: {
           // https://nagix.github.io/chartjs-plugin-streaming/2.0.0/guide/options.html
           streaming: {
             // 表示するX軸の幅をミリ秒で指定。
-            duration: 2 * 3600 * 1000,
+            duration: 60 * 1000,
             // Chart.jsに点をプロットする猶予を与える。
             delay: 1500
           }
         },
         scales: {
           x: {
-            // chartjs-plugin-streamingプラグインの機能をつかうための型。
-            type: 'realtime'
+            type: 'time',
+            time: {
+              stepSize: 30
+            }
           },
           y: {
-            // あらかじめY軸の範囲をChart.jsに教えてあげると、グラフの更新がスムーズです。
             suggestedMin: 50,
             suggestedMax: 200
           }
@@ -57,7 +53,7 @@ export default class {
 
   addPoint(label, date, value) {
     const dataset = this._findDataset(label) || this._createDataset(label)
-    dataset.data.push({x: date, y: value})
+    dataset.data.push({x: new Date(date), y: value})
     this.chart.update()
   }
 

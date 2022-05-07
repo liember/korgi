@@ -9,6 +9,10 @@ defmodule Korgi.Sensors do
   alias Korgi.Sensors.Reading
   alias Korgi.Sensors.Sensor
 
+  def sensor_pubsub_topic(sensor) do
+    "sensor/" <> (sensor.id |> to_string())
+  end
+
   @doc """
   Returns the list of sensors.
 
