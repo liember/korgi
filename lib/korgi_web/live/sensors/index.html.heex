@@ -1,5 +1,21 @@
 <h1>Listing Sensors</h1>
 
+<.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
+  <%= label f, :name %>
+  <%= text_input f, :name %>
+  <%= error_tag f, :name %>
+
+  <%= label f, :topic %>
+  <%= text_input f, :topic %>
+  <%= error_tag f, :topic %>
+
+  <%= label f, :broker_id %>
+  <%= text_input f, :broker_id %>
+  <%= error_tag f, :broker_id %>
+
+  <%= submit "Add new" %>
+</.form>
+
 <table>
   <thead>
     <tr>

@@ -4,9 +4,13 @@ defmodule KorgiWeb.SensorLive.Index do
   alias Korgi.Sensors
   alias Korgi.Sensors.Sensor
 
+  require Logger
+
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :sensors, list_sensors())}
+    {:ok,
+     assign(socket, :sensors, list_sensors())
+     |> assign(%{changeset: Sensors.change_sensor(%Sensor{})})}
   end
 
   @impl true
@@ -52,6 +56,27 @@ defmodule KorgiWeb.SensorLive.Index do
     end
 
     {:noreply, assign(socket, :sensors, list_sensors())}
+  end
+
+  def handle_event("validate", %{"sensor" => params}, socket) do
+    changeset =
+      %Sensor{}
+      |> Sensors.change_sensor(params)
+      |> Map.put(:action, :insert)
+
+    {:noreply, assign(socket, changeset: changeset)}
+  end
+
+  def handle_event("save", %{"sensor" => sensor_params}, socket) do
+    case Sensors.create_sensor(sensor_params) do
+      {:ok, _} ->
+        {:noreply, socket |> put_flash(:info, "user created")}
+
+      #       |> redirect(to: Routes.user_path(MyAppWeb.Endpoint, MyAppWeb.User.ShowView, user))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset) |> put_flash(:error, "wrong")}
+    end
   end
 
   ## TODO sort by name or other prams (no by update date)

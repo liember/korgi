@@ -15,7 +15,8 @@ defmodule Korgi.Sensors.Sensor do
   @doc false
   def changeset(sensor, attrs) do
     sensor
-    |> cast(attrs, [:name, :topic, :enabled])
+    |> cast(attrs, [:name, :topic, :enabled, :broker_id])
+    |> unique_constraint(:name)
     |> validate_required([:name, :topic, :enabled])
   end
 end
