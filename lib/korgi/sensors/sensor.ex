@@ -5,7 +5,7 @@ defmodule Korgi.Sensors.Sensor do
   schema "sensors" do
     field :name, :string
     field :topic, :string
-    field :enabled, :boolean
+    field :enabled, :boolean, default: true
     belongs_to :broker, Korgi.MQTT.Broker
     has_many :readings, Korgi.Sensors.Reading
 
@@ -16,7 +16,9 @@ defmodule Korgi.Sensors.Sensor do
   def changeset(sensor, attrs) do
     sensor
     |> cast(attrs, [:name, :topic, :enabled, :broker_id])
+    |> validate_required([:name, :topic, :enabled, :broker_id])
     |> unique_constraint(:name)
-    |> validate_required([:name, :topic, :enabled])
+    |> unique_constraint(:topic)
+    |> foreign_key_constraint(:broker_id)
   end
 end

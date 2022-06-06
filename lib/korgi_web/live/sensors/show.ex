@@ -54,6 +54,20 @@ defmodule KorgiWeb.SensorLive.Show do
     end
   end
 
+    @impl true
+  def handle_event("delete_sensor", %{"sensorid" => id}, socket) do
+    with {sensor_id, ""} <- Integer.parse(id),
+         sensor <- Sensors.get_sensor!(sensor_id) do
+
+      Sensors.delete_sensor(sensor)
+      {:noreply,
+        socket
+        |> Phoenix.LiveView.push_redirect(to: "/sensors")
+        |> put_flash(:info, "Sensor dleted")
+      }
+    end
+  end
+
   @impl true
   def handle_info({:sensor_new_reading, %{reading: reading, label: label}}, socket) do
     Logger.info("Update sensor data: #{inspect(reading.value)}")

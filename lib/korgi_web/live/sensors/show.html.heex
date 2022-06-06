@@ -13,6 +13,13 @@
   edit
 </button>
 
+<button
+  style = "background-color: red"
+  phx-click="delete_sensor"
+  phx-value-sensorid={"#{@sensor.id}"}>
+  delete
+</button>
+
 <hr>
 
 <canvas id="chart-canvas" phx-update="ignore" phx-hook="LineChart"></canvas>

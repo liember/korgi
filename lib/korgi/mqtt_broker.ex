@@ -73,6 +73,14 @@ defmodule Korgi.MQTT do
     |> Repo.update()
   end
 
+
+  def get_mqqtt_broker_id_by_name!(name) do
+    query = from u in "mqtt_brokers",
+          where: u.name == ^name,
+          select: u.id
+    Repo.all(query)
+  end
+
   @doc """
   Deletes a broker_mqtt.
 
