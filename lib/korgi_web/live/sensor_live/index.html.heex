@@ -1,0 +1,45 @@
+<h1>Listing Sensors</h1>
+
+<.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
+  <%= label f, :name %>
+  <%= text_input f, :name %>
+  <%= error_tag f, :name %>
+
+  <%= label f, :topic %>
+  <%= text_input f, :topic %>
+  <%= error_tag f, :topic %>
+
+  <%= label f, :broker_id %>
+  <%= text_input f, :broker_id %>
+  <%= error_tag f, :broker_id %>
+
+  <%= submit "Add new" %>
+</.form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Topic</th>
+      <th>Enabled</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="sensors">
+    <%= for sensor <- @sensors do %>
+      <tr id={"sensor-#{sensor.id}"}>
+        <td><%= sensor.name %></td>
+        <td><%= sensor.topic %></td>
+        <td>
+          <button style = {if sensor.enabled do "background-color: green" else "background-color: red" end} phx-click="toggle_sensor_state" phx-value-sensorid={"#{sensor.id}"} >
+            <%= if sensor.enabled do "active" else "inactive" end %>
+          </button>
+        </td>
+        <td>
+          <span><%= live_redirect "Show", to: Routes.sensor_show_path(@socket, :show, sensor) %></span>
+       </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

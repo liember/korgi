@@ -1,0 +1,48 @@
+
+
+<button
+  style = {if @sensor.enabled do "background-color: green" else "background-color: red" end}
+  phx-click="toggle_sensor_state"
+  phx-value-sensorid={"#{@sensor.id}"}>
+  <%= if @sensor.enabled do "active" else "inactive" end %>
+</button>
+
+<button
+  phx-click="edit_sensor"
+  phx-value-sensorid={"#{@sensor.id}"}>
+  edit
+</button>
+
+<button
+  style = "background-color: red"
+  phx-click="delete_sensor"
+  phx-value-sensorid={"#{@sensor.id}"}>
+  delete
+</button>
+
+<hr>
+
+<canvas id="chart-canvas" phx-update="ignore" phx-hook="LineChart"></canvas>
+
+<table>
+<thead>
+  <tr>
+    <th><strong>Sensor info</strong></th>
+    <th><strong>Broker info</strong></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>Name: <%= @sensor.name %></td>
+    <td>Name: <%= @broker.name %> </td>
+  </tr>
+  <tr>
+    <td>Topic: <%= @sensor.topic %></td>
+    <td>Host: <%= @broker.host %></td>
+  </tr>
+</tbody>
+</table>
+
+
+
+<span><%= live_redirect "Back", to: Routes.sensor_index_path(@socket, :index) %></span>
