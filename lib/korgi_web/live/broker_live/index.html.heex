@@ -1,0 +1,69 @@
+<h1>Listing Brokers</h1>
+
+<.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
+  <%= label f, :name %>
+  <%= text_input f, :name %>
+  <%= error_tag f, :name %>
+
+  <%= label f, :host %>
+  <%= text_input f, :host %>
+  <%= error_tag f, :host %>
+
+  <%= label f, :username %>
+  <%= text_input f, :username %>
+  <%= error_tag f, :username %>
+
+  <%= label f, :port %>
+  <%= text_input f, :port %>
+  <%= error_tag f, :port %>
+
+  <%= label f, :password %>
+  <%= text_input f, :password %>
+  <%= error_tag f, :password %>
+
+  <%= submit "Add new" %>
+</.form>
+
+<hr>
+
+<table>
+
+  <thead>
+    <tr>
+    <th>Id</th>
+      <th>Name</th>
+      <th>Host</th>
+      <th>Port</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody id="brokers">
+    <%= for broker <- @brokers do %>
+      <tr id={"sensor-#{broker.id}"}>
+
+        <td><%= broker.id %></td>
+
+        <td><%= broker.name %></td>
+        <td><%= broker.host %></td>
+        <td><%= broker.port %></td>
+
+        <td>
+          <button
+            style = "background-color: red"
+            phx-click="delete"
+            phx-value-brokerid={"#{broker.id}"}>
+            delete
+          </button>
+        </td>
+
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<hr>
+
+<span><%= live_redirect "Back", to: Routes.index_path(@socket, :index) %></span>
+
+<hr>

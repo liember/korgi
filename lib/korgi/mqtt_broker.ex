@@ -21,6 +21,10 @@ defmodule Korgi.MQTT do
     Repo.all(Broker)
   end
 
+  def count_mqqt_brokers do
+    Repo.one(from p in "mqtt_brokers", select: count(p.id))
+  end
+
   @doc """
   Gets a single broker_mqtt.
 
@@ -73,11 +77,12 @@ defmodule Korgi.MQTT do
     |> Repo.update()
   end
 
-
   def get_mqqtt_broker_id_by_name!(name) do
-    query = from u in "mqtt_brokers",
-          where: u.name == ^name,
-          select: u.id
+    query =
+      from u in "mqtt_brokers",
+        where: u.name == ^name,
+        select: u.id
+
     Repo.all(query)
   end
 

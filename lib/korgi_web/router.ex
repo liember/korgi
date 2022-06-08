@@ -17,10 +17,13 @@ defmodule KorgiWeb.Router do
   scope "/", KorgiWeb do
     pipe_through :browser
 
+    live "/", Live.Index, :index
+
+    live "/brokers", BrokerLive.Index, :index
+
     live "/sensors", SensorLive.Index, :index
     # live "/sensors/new", SensorLive.Index, :new
     # live "/sensors/:id/edit", SensorLive.Index, :edit
-
     live "/sensors/:id", SensorLive.Show, :show
     # live "/sensors/:id/show/edit", SensorLive.Show, :edit
   end

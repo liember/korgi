@@ -26,6 +26,10 @@ defmodule Korgi.Sensors do
     Repo.all(Sensor)
   end
 
+  def count do
+    Repo.one(from p in "sensors", select: count(p.id))
+  end
+
   @doc """
   Gets a single sensor.
 

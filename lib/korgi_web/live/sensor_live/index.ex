@@ -3,6 +3,7 @@ defmodule KorgiWeb.SensorLive.Index do
 
   alias Korgi.Sensors
   alias Korgi.Sensors.Sensor
+  alias Korgi.MQTT
 
   require Logger
 
@@ -18,18 +19,6 @@ defmodule KorgiWeb.SensorLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Sensor")
-    |> assign(:sensor, Sensors.get_sensor!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Sensor")
-    |> assign(:sensor, %Sensor{})
-  end
-
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Listing Sensors")
@@ -38,8 +27,9 @@ defmodule KorgiWeb.SensorLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    sensor = Sensors.get_sensor!(id)
-    {:ok, _} = Sensors.delete_sensor(sensor)
+    {:ok, _} =
+      Sensors.get_sensor!(id)
+      |> Sensors.delete_sensor()
 
     {:noreply, assign(socket, :sensors, list_sensors())}
   end
@@ -69,8 +59,13 @@ defmodule KorgiWeb.SensorLive.Index do
 
   def handle_event("save", %{"sensor" => sensor_params}, socket) do
     case Sensors.create_sensor(sensor_params) do
-      {:ok, _} ->
-        {:noreply, socket |> put_flash(:info, "user created")}
+      {:ok, sensor} ->
+        MQTT.Connection.subscribe(sensor)
+
+        {:noreply,
+         socket
+         |> put_flash(:info, "user created")
+         |> assign(:sensors, list_sensors())}
 
       #       |> redirect(to: Routes.user_path(MyAppWeb.Endpoint, MyAppWeb.User.ShowView, user))}
 

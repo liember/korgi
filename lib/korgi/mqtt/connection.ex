@@ -41,6 +41,20 @@ defmodule Korgi.MQTT.Connection do
     end
   end
 
+  def connect(broker) do
+    Logger.info("Connecting to #{inspect(broker)}")
+
+    Tortoise.Supervisor.start_child(
+      client_id: broker.name,
+      handler: {Handler, []},
+      user_name: broker.username,
+      password: broker.password,
+      server:
+        {Tortoise.Transport.Tcp, host: broker.host |> String.to_charlist(), port: broker.port},
+      subscriptions: []
+    )
+  end
+
   def subscribe(%Sensor{broker_id: broker_id, topic: topic}) do
     broker = MQTT.get_broker_mqtt!(broker_id)
     Tortoise.Connection.subscribe(broker.name, topic)

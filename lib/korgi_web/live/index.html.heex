@@ -1,0 +1,27 @@
+<h1>Main page</h1>
+
+<hr>
+
+<table>
+  <thead>
+    <tr>
+      <th>
+        <%= live_patch "brokers", to: Routes.broker_index_path(@socket, :index) %>
+      </th>
+      <th>
+        <%= live_patch "sensors", to: Routes.sensor_index_path(@socket, :index) %>
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        <%= @b_count %>
+      </td>
+      <td>
+        <%= @s_count %>
+      </td>
+    </tr>
+  </tbody>
+</table>
